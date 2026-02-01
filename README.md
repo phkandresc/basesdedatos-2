@@ -1,6 +1,6 @@
 # Bases de Datos 2
 
-Repositorio para la materia **Bases de Datos 2** de la universidad.
+Repositorio para la materia **Bases de Datos 2** .
 
 ## 🛠️ Tecnologías
 
@@ -24,11 +24,3 @@ Cada capítulo contiene:
 - **recursos/** - Diapositivas y material teórico
 - **ejercicios-clase/** - Ejercicios vistos en clase
 - **ejercicios/** - Ejercicios prácticos para resolver
-
-## 🚀 Configuración Inicial
-
-Para configurar la base de datos inicial, ejecutar los scripts en la carpeta `setup/`:
-
-```bash
-psql -U postgres -f setup/crear-base-datos.sql
-psql -U postgres -d basesdedatos2 -f setup/datos-iniciales.sql
