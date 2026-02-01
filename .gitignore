@@ -1,0 +1,24 @@
+# PostgreSQL
+*.log
+*.pid
+*.swp
+*~
+
+# Archivos de backup de PostgreSQL
+*.backup
+*.dump
+*.sql.bak
+
+# Archivos temporales
+*.tmp
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-*
+
+# Archivos de configuración local
+config.local.*
+.env
