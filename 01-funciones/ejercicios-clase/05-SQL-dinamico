@@ -1,0 +1,13 @@
+-- Funcion con SQL dinamico
+create or replace function fn_contar_filas(tabla text)
+returns integer
+as $$
+declare
+	resultado integer;
+begin
+	execute format('select count(*) from %I', tabla) into resultado;
+	return resultado;
+end;
+$$ language plpgsql;
+
+select * from fn_contar_filas('productos');

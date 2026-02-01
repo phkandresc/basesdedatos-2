@@ -1,0 +1,62 @@
+-- Ejercicios sobre tipos de funciones
+-- Funciones escalares
+create or replace function fn_calcular_iva(precio numeric)
+returns numeric
+as $$
+	select precio * 0.12;
+$$ language sql
+
+-- Funciones de tabla
+-- Devuelve una tabla como resultado
+-- Se crea una tabla productos
+CREATE TABLE IF NOT EXISTS public.productos
+(
+    id integer NOT NULL DEFAULT nextval('productos_id_seq'::regclass),
+    nombre text COLLATE pg_catalog."default",
+    precio numeric,
+    categoria_id integer,
+    CONSTRAINT productos_pkey PRIMARY KEY (id)
+)
+
+-- Se llena con datos
+insert into productos(nombre, precio, categoria_id)
+select 
+	'Producto ' || n,
+	-- Fórmula: floor(random() * (max - min + 1) + min)
+	(random() * (50 - 10 + 1) + 10),
+	(random() * (5 - 1 + 1) + 1)::integer
+from generate_series(1, 10) as n;
+
+create or replace function fn_productos_por_categoria(p_cat_id integer)
+returns table (
+	id_prod integer,
+	nombre text,
+	precio numeric
+)
+as $$
+begin
+	return query
+	select p.id, p.nombre, p.precio
+	from productos p
+	where p.categoria_id = p_cat_id;
+end;
+$$ language plpgsql;
+
+select * from fn_productos_por_categoria(2);
+
+-- Funcion con parametros por defecto
+create or replace function fn_aplicar_descuento(precio numeric, descuento numeric default 0.1)
+returns numeric
+as $$
+begin
+	return precio - (precio * descuento);
+end;
+$$ language plpgsql;
+
+select * from fn_aplicar_descuento(100, 0.15)
+select * from fn_aplicar_descuento(100)
+select * from fn_aplicar_descuento(descuento => 0.2, precio => 250)
+
+
+
+

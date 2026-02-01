@@ -1,0 +1,112 @@
+-- Ejercicios en clase
+-- VARIADIC para sumar un array de numeros
+
+create or replace function fn_sumar_varios(variadic numeros integer[])
+returns int 
+as $$
+declare
+	n integer;
+	total integer = 0;
+begin
+	foreach n in array numeros loop
+		total = total + n;
+	end loop;
+
+	return total;
+end;
+$$ language plpgsql;
+
+select * from fn_sumar_varios()
+select * from fn_sumar_varios(1, 2, 3, 4)
+
+create or replace function fn_resumen_factor(
+	factor numeric,
+	out suma numeric,
+	out conteo int,
+	variadic numeros integer[]
+)
+as $$
+declare 
+	n integer;
+begin
+	suma = 0;
+	conteo = 0;
+
+	foreach n in array numeros loop
+		suma = suma + (n * factor);
+		conteo = conteo + 1;
+	end loop;
+end;
+$$ language plpgsql;
+
+
+select * from fn_resumen_factor(2, 1, 2, 3);
+select * from fn_resumen_factor(1.5, variadic array[4, 6]);
+
+
+-- Funcion para calcular estadisticas de ventas con ganancia
+
+
+create or replace function fn_resumen_ventas(
+	porcentaje numeric,
+	inout total_base numeric,
+	out promedio numeric,
+	out mayor numeric,
+	variadic ventas numeric[]
+)
+as $$
+declare 
+	venta numeric;
+	suma numeric = 0;
+	cantidad integer = 0;
+begin
+	-- Para trackear el mayor
+	mayor = null;
+	
+	foreach venta in array ventas loop
+		venta = venta * (1 + porcentaje);
+		suma = suma + venta;
+
+		cantidad = cantidad + 1;
+
+		if mayor is null or venta > mayor then
+			mayor = venta;
+		end if;
+	end loop;
+
+	if cantidad > 0 then 
+		promedio = suma / cantidad;
+	else
+		promedio = null;
+		mayor = null;
+	end if;
+
+	total_base = total_base + suma;
+end;
+$$ language plpgsql;
+
+select * from fn_resumen_ventas(0.10, 1000, 200, 300, 500, 100);
+
+
+-- Funcion para concatenar texto
+create or replace function fn_nombre_completo(nombre text, apellido text)
+returns text 
+as $$
+	select nombre || ' ' || apellido;
+$$ language sql;
+
+select * from fn_nombre_completo('Juan', 'Castillo');
+
+-- Validacion antes de calculo
+create or replace function fn_calcular_area_seguro(radio numeric)
+returns numeric 
+as $$
+begin
+	if radio <= 0 then
+		raise exception 'El radio debe ser mayor a cero';
+	end if;
+
+	return pi() * radio * radio;
+end;
+$$ language plpgsql;
+

@@ -1,0 +1,91 @@
+-- Control de flujos
+create or replace function fn_bono_cargo(cargo text)
+returns numeric
+as $$
+begin
+	return case
+		when cargo = 'GERENTE' then 1000
+		when cargo = 'ANALISTA' then 500
+		when cargo = 'ASISTENTE' then 200
+		else 0
+		end case;
+end;
+$$ language plpgsql;
+
+select * from fn_bono_cargo('GERENTE');
+
+-- Sumar los primeros n numeros
+create or replace function fn_suma_numeros(n integer)
+returns integer
+as $$
+declare
+	total integer = 0;
+	i integer = 1;
+begin
+	loop
+		total = total + i;
+
+		i = i + 1;
+
+		exit when i > n;
+	end loop;
+
+	return total;
+end;
+$$ language plpgsql;
+
+select * from fn_suma_numeros(2);
+
+-- Buscar el primer numero divisible entre 7
+create or replace function fn_primer_divisible_siete(desde integer)
+returns integer 
+as $$
+begin
+	while desde % 7 != 0 loop
+		desde = desde + 1;
+	end loop;
+
+	return desde;
+end;
+$$ language plpgsql;
+
+select * from fn_primer_divisible_siete(10)
+
+-- Concatenar nombres de productos
+create or replace function fn_concatenar_nombres()
+returns text 
+as $$
+declare
+	resultado text = '';
+	prod record;
+begin
+	for prod in select nombre from productos loop
+		resultado = resultado || prod.nombre || ', ';
+	end loop;
+
+	return trim(trailing ', ' from resultado);
+end;
+$$ language plpgsql;
+
+select * from fn_concatenar_nombres();
+
+create or replace function fn_par_impar(n integer)
+returns text
+as $$
+begin
+	if n % 2 = 0 then
+		return 'ES PAR';
+	elsif n % 3 = 0 then
+		return 'ES IMPAR';
+	end if;
+
+	return null;
+end;
+$$ language plpgsql;
+
+select * from fn_par_impar(3);
+
+
+
+
+

@@ -1,0 +1,45 @@
+-- Ejercicios para clases
+-- Funciones con IN, OUT, INOUT
+
+create or replace function fn_calcular_area_rectangulo(ancho numeric, alto numeric)
+returns numeric
+as $$
+begin
+	return ancho * alto;
+end;
+$$ language plpgsql;
+
+select * from fn_calcular_area_rectangulo(5, 3);
+
+-- Funcion con OUT
+create or replace function fn_calcular_doble_triple(n integer, out doble integer, out triple integer)
+as $$
+begin
+	doble = n *2;
+	triple = n * 3;
+end;
+$$ language plpgsql;
+
+select * from fn_calcular_doble_triple(4);
+
+-- Funcion con INOUT
+create or replace function fn_aumentar_cinco(inout n integer)
+as $$
+begin
+	n = n + 5;
+end;
+$$ language plpgsql;
+
+select * from fn_aumentar_cinco(10);
+
+-- Funcion con IN, OUT
+
+create or replace function fn_calc_per_area_cuadrado(in lado numeric, out perimetro numeric, out area numeric)
+as $$
+begin
+	perimetro = lado * 4;
+	area = lado * lado;
+end;
+$$ language plpgsql;
+
+select * from fn_calc_per_area_cuadrado(4);

@@ -1,0 +1,44 @@
+-- Funcion recursiva
+CREATE TABLE IF NOT EXISTS public.empleados
+(
+    id integer NOT NULL DEFAULT nextval('empleados_id_seq'::regclass),
+    nombre text COLLATE pg_catalog."default",
+    jefe_id integer,
+    CONSTRAINT empleados_pkey PRIMARY KEY (id)
+)
+
+-- insertar datos en la tabla empleados
+insert into empleados(id, nombre, jefe_id)
+values (1, 'Ana', null),
+(2, 'Carlos', 1),
+(3, 'Diana', 2),
+(4, 'Esteban', 2),
+(5, 'Fernanda', 3);
+
+create or replace function fn_obtener_jefes(p_id_emp integer)
+returns table(
+	id_emp integer,
+	nombre text,
+	jefe_id integer,
+	nivel integer
+)
+as $$
+begin
+	return query
+	with recursive jerarquia as (
+		select e.id, e.nombre, e.jefe_id, 0 as nivel
+		from empleados e
+		where e.id = p_id_emp
+
+		union all
+
+		select e.id, e.nombre, e.jefe_id, j.nivel + 1
+		from empleados e
+		join jerarquia j on e.id = j.jefe_id
+	)
+	select * from jerarquia
+	order by nivel;
+end;
+$$ language plpgsql;
+
+select * from fn_obtener_jefes(5)

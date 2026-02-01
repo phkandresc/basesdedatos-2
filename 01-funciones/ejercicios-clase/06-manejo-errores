@@ -1,0 +1,14 @@
+-- Funcion con manejo de errores
+create or replace function fn_dividir_seguro(a numeric, b numeric)
+returns numeric
+as $$
+begin
+	return a / b;
+	exception
+		when division_by_zero then
+			return null;
+end;
+$$ language plpgsql;
+
+select * from fn_dividir_seguro(10, 0)
+
